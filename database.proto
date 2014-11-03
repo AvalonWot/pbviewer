@@ -1,0 +1,83 @@
+enum em_main_type {
+    MT_UNKNOW          =   -1;
+    VARINT          =   0;
+    BIT64           =   1;
+    LENGTH_DELIMI   =   2;
+    BIT32           =   5;
+}
+
+enum em_sub_type {
+option allow_alias = true;
+    ST_UNKNOW = -1;
+//Varint Type
+    INT32	=	0;
+    INT64	=	1;
+    UINT32	=	2;
+    UINT64	=	3;
+    SINT32	=	4;
+    SINT64	=	5;
+    BOOL	=	6;
+    ENUM	=	7;
+//Bit64 Type
+    FIXED64     =   8;
+    SFIXED64    =   9;
+    DOUBLE      =   10;
+//Length-Delimi Type
+    STRING					=11;
+    BYTES					=12;
+    EMBEDDED_MESSAGES		=13;
+    PACKED_REPEATED_FIELDS	=14;
+//Bit32 Type
+    FIXED32     =   15;
+    SFIXED32    =   16;
+    FLOAT       =   17;
+}
+
+enum em_prefix {
+    PX_UNKNOW          =   -1;
+    REQUIRED        =   0;
+    OPTIONAL        =   1;
+    REPEATED        =   2;
+}
+
+message pb_enum {
+    message vn {
+        required uint64 key = 1;
+        required string name = 2;
+    }
+    repeated vn tables = 1;
+}
+
+message pb_field {
+    required uint32 tag = 1;
+    required em_main_type mainType = 2;
+    required em_sub_type subType = 3;
+    required em_prefix prefix = 4;
+    optional uint64 message_id = 5;
+    optional uint64 enum_id = 6;
+    optional em_sub_type repeated_type = 7;     //为了解决packed = true的情况
+    optional string name = 8;
+}
+
+message pb_message {
+    repeated uint32 tags = 1;
+    repeated pb_field fields = 2;
+}
+
+message db_messages{
+    message vn {
+        required uint64 id = 1;
+        required string name = 2;
+        required pb_message msg = 3;
+    }
+    repeated vn entrys = 1;
+}
+
+message db_enums{
+    message vn {
+        required uint64 id = 1;
+        required string name = 2;
+        required pb_enum enum = 3;
+    }
+    repeated vn entrys = 1;
+}
